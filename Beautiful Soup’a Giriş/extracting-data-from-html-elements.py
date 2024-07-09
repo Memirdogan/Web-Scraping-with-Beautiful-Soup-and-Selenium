@@ -89,3 +89,30 @@ tbody_tag = soup.find("tbody")
 tr_tag_list = tbody_tag.find_all("tr")
 print(tr_tag_list)
 
+tr_tag = tr_tag_list[0]
+print(tr_tag)
+
+img_tag = tr_tag.find("img")
+a_tag = tr_tag.find("a")
+print(a_tag)
+print(img_tag)
+
+nickname_td = tr_tag.find_all("td")[-1]
+desc_td = tr_tag.find_all("td")[-2]
+print(desc_td.text)
+
+print(nickname_td)
+print(nickname_td.text)
+print(nickname_td.get_text(separator=" ", strip=True))
+
+print(img_tag)
+
+alt_attribute = img_tag["alt"]
+print(alt_attribute)
+
+src_attribute = img_tag["src"]
+print(src_attribute)
+
+print(a_tag)
+print(a_tag["href"])
+print(a_tag["target"])

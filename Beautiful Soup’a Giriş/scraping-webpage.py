@@ -10,4 +10,3 @@ result.status_code
 html = result.content
 soup = BeautifulSoup(html, "html.parser")
 soup.find("h1").text
-

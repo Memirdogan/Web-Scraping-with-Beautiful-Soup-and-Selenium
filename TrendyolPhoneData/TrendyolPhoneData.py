@@ -1,57 +1,62 @@
 import requests
 from bs4 import BeautifulSoup
 
-x = 1
-while x <= 3:
-    url = requests.get("https://www.trendyol.com/cep-telefonu-x-c103498?pi="+str(x)+"")
-    html = url.content
 
-    soup = BeautifulSoup(html, "lxml")
+def scrape_trendyol_data(pages):
+    global attribute_name, attribute_value
+    data = []
+    x = 1
 
-    product = soup.find_all("div", attrs={"class": "p-card-wrppr with-campaign-view"})
-    print("#########################################")
-    for urun in product:
-        linkbasi = "https://www.trendyol.com"
-        linksonu = urun.a.get("href")
-        link = linkbasi+linksonu
+    while x <= pages:
+        url = requests.get("https://www.trendyol.com/cep-telefonu-x-c103498?pi=" + str(x) + "")
+        html = url.content
+        soup = BeautifulSoup(html, "lxml")
+        product = soup.find_all("div", attrs={"class": "p-card-wrppr with-campaign-view"})
 
-        r1 = requests.get(link)
-        html1 = r1.content
-        soup1 = BeautifulSoup(html1, "lxml")
-        info = soup1.find("div", attrs={"class": "pr-in-cn"})
+        for urun in product:
+            try:
+                linkbasi = "https://www.trendyol.com"
+                linksonu = urun.a.get("href")
+                link = linkbasi + linksonu
 
-        info_title_folder = soup1.find("h1", attrs={"class": "pr-new-br"})
-        info_name = info_title_folder.find("span").text.strip()
+                r1 = requests.get(link)
+                html1 = r1.content
+                soup1 = BeautifulSoup(html1, "lxml")
 
-        info_brand = info_title_folder.find("a", attrs={"class": "product-brand-name-with-link"})
-        brand_text = info_brand.text.strip() if info_brand else "Null"
+                info_title_folder = soup1.find("h1", attrs={"class": "pr-new-br"})
+                info_name = info_title_folder.find("span").text.strip()
 
-        info_attiribute = soup1.find("div", attrs={"class": "attributes"})
+                info_brand = info_title_folder.find("a", attrs={"class": "product-brand-name-with-link"})
+                brand_text = info_brand.text.strip() if info_brand else "Null"
 
-        price = soup1.find("div", attrs={"class": "pr-bx-nm with-org-prc"})
-        price_text = price.text.strip() if price else "Null"
+                info_attiribute = soup1.find("div", attrs={"class": "attributes"})
 
-        print(f"Ürün adı: {info_name}")
-        print("#########################################################")
-        print(f"Marka: {brand_text}")
-        print(f"Fiyat: {price_text}")
+                price = soup1.find("div", attrs={"class": "pr-bx-nm with-org-prc"})
+                price_text = price.text.strip() if price else "Null"
 
-        if info_attiribute:
-            attrs_info = info_attiribute.find_all("li")
-            for attr in attrs_info:
-                try:
-                    attribute_name = attr.find("span", class_="attribute-label attr-name").text.strip()
-                    attribute_value_div = attr.find("span", class_="attribute-value")
-                    attribute_value = attribute_value_div.find("div", class_="attr-name attr-name-w").text.strip()
-                    print(f"{attribute_name} ----> {attribute_value}")
-                except:
-                    print("ürünün bu özelliği bulunamadı")
-        else:
-            print("Özellikler Bulunamadı")
+                attributes_dict = {}
 
-        print("\n")
-    x = x + 1
-    print("#########################################################################################")
-    print("#########################################################################################")
-    print("#########################################################################################")
-    print("#########################################################################################")
+                if info_attiribute:
+                    attrs_info = info_attiribute.find_all("li")
+                    for attr in attrs_info:
+                        try:
+                            attribute_name = attr.find("span", class_="attribute-label attr-name").text.strip()
+                            attribute_value_div = attr.find("span", class_="attribute-value")
+                            attribute_value = attribute_value_div.find("div",
+                                                                       class_="attr-name attr-name-w").text.strip()
+                            attributes_dict[attribute_name] = attribute_value
+                        except Exception as e:
+                            print(f"Hata: {e}")
+                            attributes_dict[attribute_name] = "Null"
+                else:
+                    print("Özellikler Bulunamadı")
+                data.append({
+                    "Ürün adı": info_name,
+                    "Marka": brand_text,
+                    "Fiyat": price_text,
+                    **attributes_dict
+                })
+            except Exception as e:
+                print(f"Error processing product: {e}")
+        x = x + 1
+    return data

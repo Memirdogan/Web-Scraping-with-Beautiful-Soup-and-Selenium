@@ -29,11 +29,10 @@ def scrape_trendyol_data(pages):
                 info_brand = info_title_folder.find("a", attrs={"class": "product-brand-name-with-link"})
                 brand_text = info_brand.text.strip() if info_brand else "Null"
 
-                info_attiribute = soup1.find("div", attrs={"class": "attributes"})
-
                 price = soup1.find("div", attrs={"class": "pr-bx-nm with-org-prc"})
                 price_text = price.text.strip() if price else "Null"
 
+                info_attiribute = soup1.find("div", attrs={"class": "attributes"})
                 attributes_dict = {}
 
                 if info_attiribute:
@@ -47,7 +46,7 @@ def scrape_trendyol_data(pages):
                             attributes_dict[attribute_name] = attribute_value
                         except Exception as e:
                             print(f"Hata: {e}")
-                            attributes_dict[attribute_name] = "Null"
+                            attributes_dict[attribute_value] = "Null"
                 else:
                     print("Özellikler Bulunamadı")
                 data.append({

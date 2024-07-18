@@ -36,4 +36,3 @@ plt.ylabel('Adet')
 plt.show()
 
 
-

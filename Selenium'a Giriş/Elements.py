@@ -18,6 +18,10 @@ element_a.get_attribute("innerText") # text ile aynı
 element_a.get_attribute("href")
 element_a.get_attribute("innerHTML")
 
+
+
+
+
 #############################################
 # Finding Elements and Extracting Data (better method)
 #############################################
@@ -45,7 +49,6 @@ p_element = wait.until(EC.visibility_of_element_located(selector)) # selectorün
 
 
 driver.find_elements() # find_all gibi tüm elementleri liste halinde dönrürür
-
 p_elements = driver.find_elements(By.XPATH, "//p")
 
 
@@ -58,6 +61,26 @@ else:
 print(elem)
 
 
+
+
 #######################################################
 # Interacting with Elements (elementler ile etkileşim)
 #######################################################
+
+import time
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+
+driver = webdriver.Chrome()
+driver.get("https://www.miuul.com")
+time.sleep(2)
+
+btn_elements = driver.find_elements(By.XPATH,"//a[@id='login']")
+btn = btn_elements[0]
+btn.click()
+
+input_elements = driver.find_elements(By.XPATH,"//input[@name = 'arama']")
+input = input_elements[0]
+input.send_keys("data science", Keys.ENTER)

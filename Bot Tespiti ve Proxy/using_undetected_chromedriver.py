@@ -10,3 +10,4 @@ url = "https://bot.sannysoft.com"
 driver = uc.Chrome()
 with driver:
     driver.get(url)
+    
